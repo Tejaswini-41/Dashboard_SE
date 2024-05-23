@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs") %>
+  <body>
+    <%- include("partials/header.ejs") %>
+
+    <!-- Manage Users Section -->
+    <div>
+        <h2>Manage Users</h2>
+        <form action="/manage-admins/add" method="POST">
+            <button type="submit">Add Admin</button>
+        </form>
+        <form action="/manage-admins/edit" method="POST">
+            <button type="submit">Edit Admin</button>
+        </form>
+        <form action="/manage-admins/remove" method="POST">
+            <button type="submit">Remove Admin</button>
+        </form>
+    </div>
+
+    <!-- Manage Branches Section -->
+    <div>
+        <h2>Manage Branches</h2>
+        <form action="/manage-branches/add" method="POST">
+            <input type="text" name="branchName" placeholder="Branch Name" required>
+            <button type="submit">Add Branch</button>
+        </form>
+        <form action="/manage-branches/edit" method="POST">
+            <input type="text" name="branchId" placeholder="Branch ID" required>
+            <input type="text" name="branchName" placeholder="New Branch Name" required>
+            <button type="submit">Edit Branch</button>
+        </form>
+        <form action="/manage-branches/remove" method="POST">
+            <input type="text" name="branchId" placeholder="Branch ID" required>
+            <button type="submit">Remove Branch</button>
+        </form>
+    </div>
+
+    <!-- Manage Intake Capacity Section -->
+    <div>
+        <h2>Manage Intake Capacity</h2>
+        <ul>
+            <li><a href="/manage-intake/add">Add Intake</a></li>
+            <li><a href="/manage-intake/edit">Edit Intake</a></li>
+            <li><a href="/manage-intake/remove">Remove Intake</a></li>
+        </ul>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

@@ -54,6 +54,38 @@
           </div>
 
           <div class="mb-3">
+            <label for="seatIntake" class="form-label">NBA Accredition</label>
+            <select
+              class="form-select"
+              id="seatIntake"
+              name="seatIntake"
+              aria-label="Seat Intake"
+            >
+              <option disabled>NBA Accredition</option>
+              <option selected value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="seatIntake" class="form-label">Seat Intake:</label>
+            <select
+              class="form-select"
+              id="seatIntake"
+              name="seatIntake"
+              aria-label="Seat Intake"
+            >
+              <option disabled>Seat Intake</option>
+              <option selected value="60">60</option>
+              <option value="180">120</option>
+              <option value="180">180</option>
+              <option value="240">240</option>
+              <option value="360">360</option>
+            </select>
+          </div>
+
+
+          <div class="mb-3">
             <label for="seat_type" class="form-label">Seat Type:</label>
             <select
               class="form-select"
@@ -89,10 +121,12 @@
             <th>Sr.No.:</th>
             <th>College</th>
             <th>Branch</th>
+            <th>NBA Accredition</th>
             <th>Seat Type</th>
-            <th>Intake</th>
+            <th>SI</th>
             <th>Filled</th>
             <th>Vacant</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -101,8 +135,9 @@
             <td><%= index + 1 %></td>
             <td><%= data.names.college[row.college] %></td>
             <td><%= data.names.branch[row.branch] %></td>
+            <td><%= row.NBA_Accredition %></td>
             <td><%= row.seat_type %></td>
-            <td><%= row.intake %></td>
+            <td><%= row.SI %></td>
             <td><%= row.filled %></td>
             <td><%= row.vacant %></td>
           </tr>

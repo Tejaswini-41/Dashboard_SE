@@ -199,6 +199,7 @@
                 placeholder="Date"
                 aria-label="Date"
                 required
+                max="<%= new Date().toISOString().split('T')[0] %>"
               />
               <label for="doa">Date of Admission:</label>
             </div>
@@ -327,8 +328,9 @@
         const college = document.getElementById("college").value;
         const branch = document.getElementById("branch").value;
         const feeStatus = document.getElementById("fee_status").value;
-        const doa = document.getElementById("doa").value;
-
+        const doaInput = document.getElementById("doa");
+        const doa = doaInput.value;
+      
         if (
           !firstName ||
           !lastName ||
@@ -345,26 +347,33 @@
           alert("Please fill in all required fields.");
           return;
         }
-
+      
         const mobilePattern = /[0-9]{10,}/;
         const enrolmentPattern = /[0-9]{6,}/;
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+        const today = new Date();
+        const selectedDate = new Date(doa);
+      
         if (!mobilePattern.test(mobile)) {
           alert("Please enter a valid mobile number.");
           return;
         }
-
+      
         if (!enrolmentPattern.test(enrolmentNo)) {
           alert("Please enter a valid enrolment number.");
           return;
         }
-
+      
         if (!emailPattern.test(email)) {
           alert("Please enter a valid email address.");
           return;
         }
-
+      
+        if (selectedDate > today) {
+          alert("Please select a date of admission that is not in the future.");
+          return;
+        }
+      
         // Populate summary fields
         document.getElementById("summaryFirstName").textContent = firstName;
         document.getElementById("summaryLastName").textContent = lastName;
@@ -372,20 +381,19 @@
         document.getElementById("summaryEnrolmentNo").textContent = enrolmentNo;
         document.getElementById("summaryEmail").textContent = email;
         document.getElementById("summarySeatType").textContent = seatType;
-        document.getElementById("summaryCandidateType").textContent =
-          candidateType;
+        document.getElementById("summaryCandidateType").textContent = candidateType;
         document.getElementById("summaryCollege").textContent = college;
         document.getElementById("summaryBranch").textContent = branch;
         document.getElementById("summaryFeeStatus").textContent = feeStatus;
         document.getElementById("summaryDoa").textContent = doa;
-
+      
         // Hide form section
         document.getElementById("formSection").style.display = "none";
-
+      
         // Show summary section
         document.getElementById("summarySection").style.display = "block";
       }
-
+      
       function confirmDetails() {
         const confirmed = document.getElementById("confirmCheckbox").checked;
 

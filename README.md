@@ -25,3 +25,5 @@ write following commands in Terminal
 8.2: node index.js ( if you have nodemon then nodemon index.js) --> (refer google to install nodemon, it is better way to run node projects)
 8.3: go to http://localhost:3000 from your browser
 8.4: Check PG Version (just to verify that you are connected to Database)
+
+9: Test everything first.
