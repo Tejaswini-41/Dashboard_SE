@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head.ejs") %>
+<body>
+<%- include("partials/header.ejs") %>
+
+<h1>Student Information</h1>
+
+<div class="card p-4">
+  <div class="list-group">
+    <a href="/add_student" class="list-group-item list-group-item-action">Add Student</a>
+    <a href="/remove_student" class="list-group-item list-group-item-action">Remove Student</a>
+    <a href="/update_student" class="list-group-item list-group-item-action">Update Student</a>
+  </div>
+</div>
+
+<%- include("partials/footer.ejs") %>
+</body>
+</html>

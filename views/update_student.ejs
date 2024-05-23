@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head.ejs") %>
+<body>
+<%- include("partials/header.ejs") %>
+
+<div class="container">
+  <h1>Update Student</h1>
+  <form action="/update_student/<%= student.email %>" method="post">
+    <div class="mb-3">
+      <label for="first_name" class="form-label">First Name</label>
+      <input type="text" class="form-control" id="first_name" name="first_name" value="<%= student.first_name %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="last_name" class="form-label">Last Name</label>
+      <input type="text" class="form-control" id="last_name" name="last_name" value="<%= student.last_name %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="mobile" class="form-label">Mobile</label>
+      <input type="text" class="form-control" id="mobile" name="mobile" value="<%= student.mobile %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="enrolment_no" class="form-label">Enrolment No</label>
+      <input type="text" class="form-control" id="enrolment_no" name="enrolment_no" value="<%= student.enrolment_no %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" value="<%= student.email %>" readonly>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col">
+        <div class="form-floating">
+          <select class="form-select" name="seat_type" aria-label="Seat Type" required>
+            <option value="" disabled>Select Seat Type</option>
+            <option value="NRI" <%= student.seat_type === "NRI" ? 'selected' : '' %>>NRI</option>
+            <option value="FN" <%= student.seat_type === "FN" ? 'selected' : '' %>>FN</option>
+            <option value="OCI" <%= student.seat_type === "OCI" ? 'selected' : '' %>>OCI</option>
+            <option value="PIO" <%= student.seat_type === "PIO" ? 'selected' : '' %>>PIO</option>
+            <option value="CIWGC" <%= student.seat_type === "CIWGC" ? 'selected' : '' %>>CIWGC</option>
+          </select>
+          <label for="seat_type">Seat Type</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-floating">
+          <select class="form-select" name="candidate_type" aria-label="Candidate Type" required>
+            <option value="" disabled>Select Candidate Type</option>
+            <option value="NRI" <%= student.candidate_type === "NRI" ? 'selected' : '' %>>NRI</option>
+            <option value="FN" <%= student.candidate_type === "FN" ? 'selected' : '' %>>FN</option>
+            <option value="OCI" <%= student.candidate_type === "OCI" ? 'selected' : '' %>>OCI</option>
+            <option value="PIO" <%= student.candidate_type === "PIO" ? 'selected' : '' %>>PIO</option>
+            <option value="CIWGC" <%= student.candidate_type === "CIWGC" ? 'selected' : '' %>>CIWGC</option>
+          </select>
+          <label for="candidate_type">Candidate Type</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col">
+        <div class="form-floating">
+          <select class="form-select" name="college" aria-label="College">
+            <option value="" disabled>Select College</option>
+            <option value="VIIT" <%= student.college === "VIIT" ? 'selected' : '' %>>VIIT</option>
+            <option value="VIT" <%= student.college === "VIT" ? 'selected' : '' %>>VIT</option>
+            <option value="VU" <%= student.college === "VU" ? 'selected' : '' %>>VU</option>
+          </select>
+          <label for="college">College</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-floating">
+          <select class="form-select" name="branch" aria-label="Branch">
+            <option value="" disabled>Select Branch</option>
+            <option value="CSE" <%= student.branch === "CSE" ? 'selected' : '' %>>Computer Science (CSE)</option>
+            <option value="IT" <%= student.branch === "IT" ? 'selected' : '' %>>Information Technology (IT)</option>
+            <option value="AIDS" <%= student.branch === "AIDS" ? 'selected' : '' %>>Artificial Intelligence and Data Science (AIDS)</option>
+            <option value="AI" <%= student.branch === "AI" ? 'selected' : '' %>>Artificial Intelligence (AI)</option>
+            <option value="AIML" <%= student.branch === "AIML" ? 'selected' : '' %>>Artificial Intelligence and Machine Learning (AIML)</option>
+            <option value="Civil" <%= student.branch === "Civil" ? 'selected' : '' %>>Civil Engineering</option>
+            <option value="Mech" <%= student.branch === "Mech" ? 'selected' : '' %>>Mechanical Engineering</option>
+            <option value="ENTC" <%= student.branch === "ENTC" ? 'selected' : '' %>>Electronics and Telecommunication (ENTC)</option>
+            <option value="DS" <%= student.branch === "DS" ? 'selected' : '' %>>Data Science</option>
+            <option value="IoT" <%= student.branch === "IoT" ? 'selected' : '' %>>Internet of Things (IoT)</option>
+          </select>
+          <label for="branch">Branch</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col">
+        <div class="form-floating">
+          <select class="form-select" name="fee_status" aria-label="Fee Status" required>
+            <option value="" disabled>Select Fee Status</option>
+            <option value="Paid" <%= student.fee_status === "Paid" ? 'selected' : '' %>>Paid</option>
+            <option value="Unpaid" <%= student.fee_status === "Unpaid" ? 'selected' : '' %>>Unpaid</option>
+          </select>
+          <label for="fee_status">Fee Status</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-floating">
+          <input type="date" class="form-control" name="doa" aria-label="Date of Admission" value="<%= student.doa.toISOString().slice(0, 10) %>" required>
+          <label for="doa">Date of Admission</label>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Student</button>
+  </form>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a href="/" class="btn btn-success me-md-2">Home</a>
+  </div>
+</div>
+
+<%- include("partials/footer.ejs") %>
+</body>
+</html>

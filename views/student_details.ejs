@@ -1,52 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("partials/head.ejs") %>
-  <body>
-    <%- include("partials/header.ejs") %>
+<%- include("partials/head.ejs") %>
+<body>
+<%- include("partials/header.ejs") %>
 
-    <h1>List Of Students</h1>
+<h1>List Of Students</h1>
 
-    <div class="container">
-      <div class="text-center">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Mobile No</th>
-              <th scope="col">Email</th>
-              <th scope="col">Enrolment No</th>
-              <th scope="col">Seat Type</th>
-              <th scope="col">Candidate Type</th>
-              <th scope="col">College</th>
-              <th scope="col">Branch</th>
-              <th scope="col">Fee Status</th>
-              <th scope="col">Date of Admission</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% students.forEach(student => { %>
-            <tr>
-              <td><%= student.first_name %> <%= student.last_name %></td>
-              <td><%= student.mobile %></td>
-              <td><%= student.email %></td>
-              <td><%= student.enrolment_no %></td>
-              <td><%= student.seat_type %></td>
-              <td><%= student.candidate_type %></td>
-              <td><%= student.college %></td>
-              <td><%= student.branch %></td>
-              <td><%= student.fee_status %></td>
-              <td>
-                <%= new Date(student.doa).toLocaleDateString('en-US', { weekday:
-                'short', day: '2-digit', month: 'short', year: 'numeric' }) %>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-        <a href="/" class="btn btn-success">Home</a>
-      </div>
-    </div>
-  </body>
+<div class="container">
+  <div class="text-center">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Mobile No</th>
+          <th scope="col">Email</th>
+          <th scope="col">Enrolment No</th>
+          <th scope="col">Seat Type</th>
+          <th scope="col">Candidate Type</th>
+          <th scope="col">College</th>
+          <th scope="col">Branch</th>
+          <th scope="col">Fee Status</th>
+          <th scope="col">Date of Admission</th>
+          <th scope="col">Actions</th> <!-- New column for actions -->
+        </tr>
+      </thead>
+      <tbody>
+        <% students.forEach(student => { %>
+        <tr>
+          <td><%= student.first_name %> <%= student.last_name %></td>
+          <td><%= student.mobile %></td>
+          <td><%= student.email %></td>
+          <td><%= student.enrolment_no %></td>
+          <td><%= student.seat_type %></td>
+          <td><%= student.candidate_type %></td>
+          <td><%= student.college %></td>
+          <td><%= student.branch %></td>
+          <td><%= student.fee_status %></td>
+          <td>
+            <%= new Date(student.doa).toLocaleDateString('en-US', { weekday:
+            'short', day: '2-digit', month: 'short', year: 'numeric' }) %>
+          </td>
+          <td>
+            <!-- Add button -->
+            <a href="/update_student/<%= student.email %>" class="btn btn-primary">ADD</a>
+            <!-- Update button -->
+            <a href="/update_student/<%= student.email %>" class="btn btn-primary">Update</a>
+            <!-- Remove button -->
+            <form action="/remove_student/<%= student.email %>" method="post" style="display: inline;">
+              <button type="submit" class="btn btn-danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+    <a href="/" class="btn btn-success">Home</a>
+  </div>
+</div>
+
+</body>
 </html>
