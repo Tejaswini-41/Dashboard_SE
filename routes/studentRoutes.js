@@ -181,10 +181,153 @@ router.post("/update_student/:email", ensureAuthenticated, async (req, res) => {
   const validFeeStatus = fee_status.toLowerCase();
 
   try {
-    await db.query("UPDATE student_details SET first_name = $1, last_name = $2, mobile = $3, enrolment_no = $4, seat_type = $5, candidate_type = $6, college = $7, branch = $8, fee_status = $9, doa = $10 WHERE email = $11", 
-    [first_name, last_name, mobile, enrolment_no, seat_type, candidate_type, validCollege, validBranch, validFeeStatus, doa, email]);
+    await db.query("BEGIN");
+
+    // Fetch current student details
+    const currentStudentResult = await db.query("SELECT * FROM student_details WHERE email = $1", [email]);
+    if (currentStudentResult.rows.length === 0) {
+      await db.query("ROLLBACK");
+      return res.status(404).send("Student not found");
+    }
+    const currentStudent = currentStudentResult.rows[0];
+
+    // Remove the student (adjusting seat counts accordingly)
+    let decrementQuery;
+    switch (currentStudent.seat_type.toLowerCase()) {
+      case "nri":
+        decrementQuery = `
+          UPDATE college_data
+          SET NRI_filled = NRI_filled - 1, NRI_vacant = NRI_vacant + 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "il":
+        decrementQuery = `
+          UPDATE college_data
+          SET IL_filled = IL_filled - 1, IL_vacant = IL_vacant + 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "ciwgc":
+        decrementQuery = `
+          UPDATE college_data
+          SET CIWGC_filled = CIWGC_filled - 1, CIWGC_vacant = CIWGC_vacant + 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "oci":
+      case "pio":
+      case "fn":
+        decrementQuery = `
+          UPDATE college_data
+          SET OPF_filled = OPF_filled - 1, OPF_vacant = OPF_vacant + 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      default:
+        throw new Error("Invalid seat type");
+    }
+    await db.query(decrementQuery, [currentStudent.college, currentStudent.branch]);
+
+    await db.query("DELETE FROM student_details WHERE email = $1", [email]);
+
+    // Check seat availability for the new details
+    let checkQuery;
+    switch (seat_type.toLowerCase()) {
+      case "nri":
+        checkQuery = `
+          SELECT NRI_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND NRI_vacant > 0
+        `;
+        break;
+      case "il":
+        checkQuery = `
+          SELECT IL_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND IL_vacant > 0
+        `;
+        break;
+      case "ciwgc":
+        checkQuery = `
+          SELECT CIWGC_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND CIWGC_vacant > 0
+        `;
+        break;
+      case "oci":
+      case "pio":
+      case "fn":
+        checkQuery = `
+          SELECT OPF_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND OPF_vacant > 0
+        `;
+        break;
+      default:
+        throw new Error("Invalid seat type");
+    }
+
+    const checkResult = await db.query(checkQuery, [validCollege, validBranch]);
+    if (checkResult.rows.length === 0) {
+      await db.query("ROLLBACK");
+      return res.status(400).send(`
+        <script>
+          alert("No available seats for the specified seat type.");
+          setTimeout(function() {
+            window.location.href = '/update_student/${email}';
+          }, 0);
+        </script>
+      `);
+    }
+
+    // Insert the new student details
+    const insertQuery = `
+      INSERT INTO student_details (first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `;
+    const insertValues = [first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, validCollege, validBranch, validFeeStatus, doa];
+    await db.query(insertQuery, insertValues);
+
+    // Increment the new seat count
+    let incrementQuery;
+    switch (seat_type.toLowerCase()) {
+      case "nri":
+        incrementQuery = `
+          UPDATE college_data
+          SET NRI_filled = NRI_filled + 1, NRI_vacant = NRI_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "il":
+        incrementQuery = `
+          UPDATE college_data
+          SET IL_filled = IL_filled + 1, IL_vacant = IL_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "ciwgc":
+        incrementQuery = `
+          UPDATE college_data
+          SET CIWGC_filled = CIWGC_filled + 1, CIWGC_vacant = CIWGC_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "oci":
+      case "pio":
+      case "fn":
+        incrementQuery = `
+          UPDATE college_data
+          SET OPF_filled = OPF_filled + 1, OPF_vacant = OPF_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      default:
+        throw new Error("Invalid seat type");
+    }
+
+    await db.query(incrementQuery, [validCollege, validBranch]);
+
+    await db.query("COMMIT");
     res.redirect("/student_info");
   } catch (error) {
+    await db.query("ROLLBACK");
     console.error("Error updating student data:", error);
     res.status(500).send("Internal Server Error");
   }

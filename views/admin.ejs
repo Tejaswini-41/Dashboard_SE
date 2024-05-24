@@ -4,9 +4,9 @@
   <body>
     <%- include("partials/header.ejs") %>
 
-    <div class="container ">
+    <div class="container">
         <h1>Manage Users</h1>
-        <div class="row mb-3 ">
+        <div class="row mb-3">
           <div class="col-md-6">
             <form action="/manage-admins/add" method="POST" class="d-grid gap-2 w-50">
               <button type="submit" class="btn btn-primary">Add Admin</button>
@@ -29,66 +29,19 @@
         </div>
       </div>
 
-    <div class="container mt-4">
-      <h1>Manage Branches</h1>
-      <div class="mb-3">
-        <form action="/manage-branches/add" method="POST" class="row g-3">
-          <div class="col-md-6">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="branchNameAdd" name="branchName" placeholder="Branch Name" required>
-              <label for="branchNameAdd">Branch Name</label>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <button type="submit" class="btn btn-primary">Add Branch</button>
-          </div>
-        </form>
-      </div>
-      <div class="mb-3">
-        <form action="/manage-branches/edit" method="POST" class="row g-3">
-          <div class="col-md-3">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="branchIdEdit" name="branchId" placeholder="Branch ID" required>
-              <label for="branchIdEdit">Branch ID</label>
-            </div>
-          </div>
-          <div class="col-md-5">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="branchNameEdit" name="branchName" placeholder="New Branch Name" required>
-              <label for="branchNameEdit">New Branch Name</label>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <button type="submit" class="btn btn-primary">Edit Branch</button>
-          </div>
-        </form>
-      </div>
-      <div class="mb-3">
-        <form action="/manage-branches/remove" method="POST" class="row g-3">
-          <div class="col-md-8">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="branchIdRemove" name="branchId" placeholder="Branch ID" required>
-              <label for="branchIdRemove">Branch ID</label>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <button type="submit" class="btn btn-primary">Remove Branch</button>
-          </div>
-        </form>
-      </div>
-    </div>
+
 
     <div class="container mt-4">
-      <h1>Manage Intake Capacity</h1>
+      <h1>Manage Branch & Intake</h1>
       <ul class="list-group w-25">
         <li class="list-group-item">
-          <a href="/manage-intake/add" class="btn btn-success w-100 ">Add Intake</a>
+          <a href="/manage-branches/add" class="btn btn-success w-100">Add New Branch & Intake</a>
         </li>
         <li class="list-group-item">
-          <a href="/manage-intake/edit" class="btn btn-success w-100">Edit Intake</a>
+          <a href="/manage-branches/edit" class="btn btn-success w-100">Edit Branch & Intake</a>
         </li>
         <li class="list-group-item">
-          <a href="/manage-intake/remove" class="btn btn-success w-100">Remove Intake</a>
+          <a href="/manage-branches/remove" class="btn btn-success w-100">Remove Branch</a>
         </li>
       </ul>
     </div>

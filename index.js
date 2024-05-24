@@ -1,3 +1,5 @@
+// app.js
+
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
@@ -6,6 +8,7 @@ import dbRoutes from "./routes/dbRoutes.js";
 import viewRoutes from "./routes/viewRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import loginRouter from "./routes/login.js";
+import adminRoutes from "./routes/adminRoutes.js"; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +30,7 @@ app.use("/", loginRouter);
 app.use("/", viewRoutes);
 app.use("/", dbRoutes);
 app.use("/", studentRoutes);
+app.use("/", adminRoutes); // Mount adminRoutes
 
 // Error handling middleware
 app.use((err, req, res, next) => {

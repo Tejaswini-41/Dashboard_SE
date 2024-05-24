@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs") %>
+  <body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="container mt-5">
+      <h1 class="text-center text-primary mb-4">Edit Branch & Intake</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+              <form id="editForm">
+                <div class="mb-3">
+                  <label for="college" class="form-label">College Name:</label>
+                  <select class="form-select" id="college" name="college" required>
+                    <option value="" disabled selected>Select College</option>
+                    <option value="VIIT">VIIT</option>
+                    <option value="VIT">VIT</option>
+                    <option value="VU">VU</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="branch" class="form-label">Branch Name:</label>
+                  <select class="form-select" id="branch" name="branch" required>
+                    <option value="" disabled selected>Select Branch</option>
+                    <!-- Branch options will be dynamically added here -->
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="intake" class="form-label">Intake:</label>
+                  <input type="number" class="form-control" id="intake" name="intake" placeholder="Enter intake number" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Update Branch & Intake</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+
+    <script>
+      // Function to fetch branches based on the selected college
+      async function fetchBranches() {
+        const college = document.getElementById('college').value;
+        const response = await fetch(`/branches?college=${college}`);
+        const data = await response.json();
+        
+        // Update the branch dropdown with new options
+        const branchSelect = document.getElementById('branch');
+        branchSelect.innerHTML = '<option value="" disabled selected>Select Branch</option>';
+        data.branches.forEach(branch => {
+          const option = document.createElement('option');
+          option.value = branch.id;
+          option.textContent = branch.name;
+          branchSelect.appendChild(option);
+        });
+      }
+
+      document.getElementById('college').addEventListener('change', fetchBranches);
+
+      document.getElementById('editForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+        
+        // Submit the form using AJAX
+        fetch('/manage-branches/edit', {
+          method: 'POST',
+          body: new FormData(this)
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('Branch updated successfully!');
+          } else {
+            alert('Error updating branch!');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to update branch');
+        });
+      });
+    </script>
+  </body>
+</html>
