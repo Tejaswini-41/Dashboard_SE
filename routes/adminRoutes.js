@@ -5,19 +5,24 @@ import { addIntake, editIntake, removeIntake } from "./intakeController.js";
 
 const router = express.Router();
 
-// User Routes
-router.post("/manage-users/add", addUser);
-router.put("/manage-users/edit/:id", editUser);
-router.delete("/manage-users/remove/:id", removeUser);
+// // User Routes
+// router.post("/manage-users/add", addUser);
+// router.put("/manage-users/edit/:id", editUser);
+// router.delete("/manage-users/remove/:id", removeUser);
+
+// Route to render the add_branch.ejs form
+router.get("/manage-branches/add-form", (req, res) => {
+    res.render("add_branch");
+  });
 
 // Branch Routes
 router.post('/manage-branches/add', addBranch);
 router.put('/manage-branches/edit/:id', editBranch);
 router.delete('/manage-branches/remove/:id', removeBranch);
 
-// Intake Routes
-router.post("/manage-intake/add", addIntake);
-router.put("/manage-intake/edit/:id", editIntake);
-router.delete("/manage-intake/remove/:id", removeIntake);
+// // Intake Routes
+// router.post("/manage-intake/add", addIntake);
+// router.put("/manage-intake/edit/:id", editIntake);
+// router.delete("/manage-intake/remove/:id", removeIntake);
 
 export default router;
