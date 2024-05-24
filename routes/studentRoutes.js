@@ -19,8 +19,8 @@ router.get("/add_student", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/add_student", ensureAuthenticated, async (req, res) => {
-  const { first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa } = req.body;
-
+  var { first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa } = req.body;
+  branch = branch.toLowerCase();
   try {
     await db.query("BEGIN");
 

@@ -1,6 +1,5 @@
 import express from "express";
 import { db } from "./db.js";
-import { names } from "./data.js";
 import { ensureAuthenticated } from "./db_functions.js";
 
 const router = express.Router();
@@ -19,9 +18,9 @@ router.get("/view_data", ensureAuthenticated, async (req, res) => {
 
 router.post("/view_data", ensureAuthenticated, async (req, res) => {
   try {
-    const { college, branch, si, seat_type } = req.body;
+    const { college, branch, seat_type } = req.body;
 
-    let sqlQuery = "SELECT * FROM parent_table WHERE 1=1"; // Start with WHERE 1=1
+    let sqlQuery = "SELECT * FROM seat_data WHERE 1 = 1";
 
     if (college !== "all") {
       sqlQuery += ` AND college = '${college}'`;
@@ -29,11 +28,6 @@ router.post("/view_data", ensureAuthenticated, async (req, res) => {
 
     if (branch !== "all") {
       sqlQuery += ` AND branch = '${branch}'`;
-    }
-
-    // Correct the comparison for the si condition if it's a column name
-    if (si !== "60") {
-      sqlQuery += ` AND si = '${si}'`;
     }
 
     if (seat_type !== "all") {
@@ -57,10 +51,43 @@ router.post("/view_data", ensureAuthenticated, async (req, res) => {
 
 router.get("/report", ensureAuthenticated, async (req, res) => {
   try {
-    // Your code for generating report
+    const query = `SELECT 
+        college,
+        branch,
+        SUM(CASE WHEN seat_type = 'NRI' THEN intake ELSE 0 END) AS nri_intake,
+        SUM(CASE WHEN seat_type = 'NRI' THEN filled ELSE 0 END) AS nri_filled,
+        SUM(CASE WHEN seat_type = 'NRI' THEN vacant ELSE 0 END) AS nri_vacant,
+        SUM(CASE WHEN seat_type = 'OCI' THEN intake ELSE 0 END) AS oci_intake,
+        SUM(CASE WHEN seat_type = 'OCI' THEN filled ELSE 0 END) AS oci_filled,
+        SUM(CASE WHEN seat_type = 'OCI' THEN vacant ELSE 0 END) AS oci_vacant,
+        SUM(CASE WHEN seat_type = 'FN' THEN intake ELSE 0 END) AS fn_intake,
+        SUM(CASE WHEN seat_type = 'FN' THEN filled ELSE 0 END) AS fn_filled,
+        SUM(CASE WHEN seat_type = 'FN' THEN vacant ELSE 0 END) AS fn_vacant,
+        SUM(CASE WHEN seat_type = 'PIO' THEN intake ELSE 0 END) AS pio_intake,
+        SUM(CASE WHEN seat_type = 'PIO' THEN filled ELSE 0 END) AS pio_filled,
+        SUM(CASE WHEN seat_type = 'PIO' THEN vacant ELSE 0 END) AS pio_vacant,
+        SUM(CASE WHEN seat_type = 'CIWGC' THEN intake ELSE 0 END) AS ciwgc_intake,
+        SUM(CASE WHEN seat_type = 'CIWGC' THEN filled ELSE 0 END) AS ciwgc_filled,
+        SUM(CASE WHEN seat_type = 'CIWGC' THEN vacant ELSE 0 END) AS ciwgc_vacant,
+        SUM(intake) AS total_intake,
+        SUM(filled) AS total_filled,
+        SUM(vacant) AS total_vacant
+        FROM 
+        seat_data
+        GROUP BY 
+        college, branch
+        ORDER BY 
+        college ASC, branch ASC; `;
+
+    const response = await db.query(query);
+    // console.log(response.rows);
+
+    res.render("report.ejs", {
+      collegeData: response.rows,
+      names: names,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error");
+    console.log(error);
   }
 });
 
