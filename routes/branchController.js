@@ -17,8 +17,14 @@ export const renderAddBranchPage = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
-
+export const renderRemoveBranchPage = async (req, res) => {
+  try {
+    res.render('remove_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 export const addBranch = async (req, res) => {
   const { branchName } = req.body;
@@ -40,13 +46,37 @@ export const editBranch = async (req, res) => {
   }
 };
 
-export const removeBranch = async (req, res) => {
-  const { branchId } = req.body;
+export const removeBranch= async (req, res) => {
+  var { college, branch } = req.body;
+  branch = branch.toLowerCase();
+  college = college.toLowerCase();
+  
   try {
-    await db.query('DELETE FROM branches WHERE id = $1', [branchId]);
-    res.status(200).json({ message: 'Branch removed successfully' });
+    // Check if the branch exists
+    const branchExists = await db.query('SELECT * FROM college_data WHERE college=$1 and branch = $2', [college,branch]);
+    if (branchExists.rows.length === 0) {
+      return res.status(404).json({ message: 'Branch not found. Please try again with a valid branch ID' });
+    }
+
+    // Remove branch and college from the college_data table
+    await db.query('DELETE FROM college_data WHERE branch = $1 AND college = $2', [branch, college]);
+    res.status(200).json({ message: 'Branch and college removed successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error removing branch', error });
+    console.error('Error removing branch and college:', error);
+    res.status(500).json({ message: 'Error removing branch and college', error });
+  }
+};
+
+
+export const getBranchesByCollege = async (req, res) => {
+  try {
+    const { college } = req.query;
+    const query = "SELECT id, branch FROM college_data WHERE college = $1";
+    const result = await db.query(query, [college]);
+    res.json({ branches: result.rows });
+  } catch (error) {
+    console.error('Error fetching branches by college:', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
