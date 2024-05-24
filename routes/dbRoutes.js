@@ -9,10 +9,10 @@ const router = express.Router();
 router.post("/manage-users/add", addUser);
 
 // Route handler for rendering the admin.ejs page
-router.get("/admin.ejs", ensureAuthenticated, async (req, res) => {
+router.get("/admin", ensureAuthenticated, async (req, res) => {
   try {
     // Render the admin.ejs view
-    res.render("admin.ejs");
+    res.render("admin");
   } catch (error) {
     console.error("Error rendering admin page:", error);
     // Send error response

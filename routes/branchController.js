@@ -27,14 +27,68 @@ export const renderRemoveBranchPage = async (req, res) => {
 };
 
 export const addBranch = async (req, res) => {
-  const { branchName } = req.body;
+  var { college, branch, intake, nri, il, ciwgc, other } = req.body;
+  // Calculate seats based on selected options
+  college = college.toLowerCase();
+  branch = branch.toLowerCase();
+  const totalSeats = parseInt(intake);
+  let nriSeats = 0, ilSeats = 0, ciwgcSeats = 0, otherSeats = 0;
+
+  if (nri) {
+    nriSeats = Math.ceil(0.05 * totalSeats);
+  }
+
+  if (il) {
+    ilSeats = Math.floor(0.15 * totalSeats);
+  }
+
+  const remainingSeats = totalSeats - (nriSeats + ilSeats);
+
+  if (ciwgc) {
+    ciwgcSeats = Math.floor((0.333333334) * totalSeats * 0.15);
+  }
+
+  if (other) {
+    otherSeats = Math.floor((0.66666667) * totalSeats * 0.15);
+  }
+
   try {
-    const result = await db.query('INSERT INTO branches (name) VALUES ($1) RETURNING *', [branchName]);
-    res.status(200).json({ message: 'Branch added successfully', branch: result.rows[0] });
+    // Check if the branch already exists in the same college
+    const branchExists = await db.query('SELECT * FROM college_data WHERE college = $1 AND branch = $2', [college, branch]);
+    if (branchExists.rows.length > 0) {
+      // If the branch already exists, update its data
+      const htmlResponse = `
+        <script>
+          alert("Branch Already Exits");
+          setTimeout(function() {
+            window.location.href = '/manage-branches/add';
+          }, 0);
+        </script>
+      `;
+      return res.status(500).send(htmlResponse);
+      // res.status(200).json({ message: 'Branch and intake updated successfully', branch: result.rows[0] });
+    } else {
+      // If the branch doesn't exist, insert a new entry
+      const result = await db.query(
+        'INSERT INTO college_data (college, branch, si, nri_total,nri_filled,nri_vacant,il_total,il_filled,il_vacant, ciwgc_total,ciwgc_filled,ciwgc_vacant, opf_total,opf_filled,opf_vacant) VALUES ($1, $2, $3, $4, 0, $4, $5,0,$5,$6,0,$6,$7,0,$7) RETURNING *',
+        [college, branch, totalSeats, nriSeats, ilSeats, ciwgcSeats, otherSeats]
+      );
+      const htmlResponse = `
+        <script>
+          alert("Branch Added");
+          setTimeout(function() {
+            window.location.href = '/admin';
+          }, 0);
+        </script>
+      `;
+      return res.status(500).send(htmlResponse);
+    }
   } catch (error) {
-    res.status(500).json({ message: 'Error adding branch', error });
+    console.error('Error adding branch and intake:', error);
+    res.status(400).json({ message: 'Error adding branch and intake', error });
   }
 };
+
 
 export const editBranch = async (req, res) => {
   const { branchId, branchName } = req.body;
