@@ -1,5 +1,25 @@
 import { db } from './db.js';
 
+// Function to render the edit branch page
+export const renderEditBranchPage = async (req, res) => {
+  try {
+    res.render('edit_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+export const renderAddBranchPage = async (req, res) => {
+  try {
+    res.render('add_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
 export const addBranch = async (req, res) => {
   const { branchName } = req.body;
   try {
@@ -29,3 +49,6 @@ export const removeBranch = async (req, res) => {
     res.status(500).json({ message: 'Error removing branch', error });
   }
 };
+
+
+
