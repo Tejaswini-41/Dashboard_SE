@@ -17,8 +17,14 @@ export const renderAddBranchPage = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
-
+export const renderRemoveBranchPage = async (req, res) => {
+  try {
+    res.render('remove_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 export const addBranch = async (req, res) => {
   const { branchName } = req.body;
