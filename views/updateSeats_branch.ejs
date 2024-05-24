@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs") %>
+  <body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="container mt-5">
+      <h1 class="text-center text-primary mb-4">WORK IN PROGRESS</h1>
+      
+
+    <%- include("partials/footer.ejs") %>
+
+    <script>
+      // Function to fetch branches based on the selected college
+      async function fetchBranches(college) {
+        try {
+          const response = await fetch(`/branches?college=${college}`);
+          if (!response.ok) throw new Error("Failed to fetch branches");
+
+          const data = await response.json();
+
+          // Update the branch dropdown with new options
+          const branchSelect = document.getElementById("branch");
+          branchSelect.innerHTML =
+            '<option value="" disabled selected>Select Branch</option>';
+          data.branches.forEach((branch) => {
+            const option = document.createElement("option");
+            option.value = branch.branch.toUpperCase();
+            option.textContent = branch.branch.toUpperCase();
+            branchSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+          alert("Error fetching branches. Please try again.");
+        }
+      }
+
+      document
+        .getElementById("college")
+        .addEventListener("change", function () {
+          const college = this.value.toLowerCase();
+          fetchBranches(college);
+        });
+     
+    </script>
+  </body>
+</html>
