@@ -6,14 +6,6 @@
 
 <h1>Student Information</h1>
 
-<!-- <div class="card p-4">
-  <div class="list-group">
-    <a href="/add_student" class="list-group-item list-group-item-action">Add Student</a>
-    <a href="/remove_student" class="list-group-item list-group-item-action">Remove Student</a>
-    <a href="/student_details" class="list-group-item list-group-item-action">View Students</a>
-  </div>
-</div> -->
-
 <div class="container">
   <div class="text-center">
     <table class="table table-hover">
@@ -29,7 +21,7 @@
           <th scope="col">Branch</th>
           <th scope="col">Fee Status</th>
           <th scope="col">Date of Admission</th>
-          <th scope="col">Actions</th> <!-- New column for actions -->
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -48,10 +40,7 @@
             <%= new Date(student.doa).toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) %>
           </td>
           <td>
-          
-            <!-- Update button -->
             <a href="/update_student/<%= student.email %>" class="btn btn-primary">Update</a>
-            <!-- Remove button -->
             <form action="/remove_student/<%= student.email %>" method="post" style="display: inline;">
               <button type="submit" class="btn btn-danger">Remove</button>
             </form>
@@ -63,12 +52,9 @@
   </div>
   <div class="d-grid gap-2 d-md-flex justify-content-md-center">
     <a href="/" class="btn btn-success">Home</a>
-    <!-- Add button -->
     <a href="/add_student" class="btn btn-primary">Add</a>
   </div>
 </div>
-
-
 
 <%- include("partials/footer.ejs") %>
 </body>

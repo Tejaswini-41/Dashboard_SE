@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/student_info", ensureAuthenticated, async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM student_details");
+    const result = await db.query("SELECT * FROM student_details ORDER BY id ASC");
     res.render("student_info.ejs", { students: result.rows });
   } catch (error) {
     console.error("Error fetching student data:", error);
@@ -19,82 +19,105 @@ router.get("/add_student", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/add_student", ensureAuthenticated, async (req, res) => {
-  const {
-    first_name,
-    last_name,
-    mobile,
-    email,
-    enrolment_no,
-    seat_type,
-    candidate_type,
-    college,
-    branch,
-    fee_status,
-    doa,
-  } = req.body;
+  const { first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa } = req.body;
 
   try {
     await db.query("BEGIN");
 
-    const updateQuery = `
-      UPDATE seat_data
-      SET filled = filled + 1, vacant = vacant - 1
-      WHERE college = $1
-      AND branch = $2
-      AND seat_type = $3
-      AND vacant > 0
-      RETURNING *;
-    `;
-    const updateValues = [college, branch, seat_type];
-    const updateResult = await db.query(updateQuery, updateValues);
-
-    console.log("Update Result:", updateResult.rows);
-
-    if (updateResult.rowCount === 0) {
-      await db.query("ROLLBACK");
-      const htmlResponse = `
-        <script>
-          alert("No vacant seats available...");
-          setTimeout(function() {
-            window.location.href = '/';
-          }, 0);
-        </script>
-      `;
-      res.status(404).send(htmlResponse);
-    } else {
-      const insertQuery = `
-        INSERT INTO student_details (first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      `;
-      const insertValues = [
-        first_name,
-        last_name,
-        mobile,
-        email,
-        enrolment_no,
-        seat_type,
-        candidate_type,
-        college,
-        branch,
-        fee_status,
-        doa,
-      ];
-      await db.query(insertQuery, insertValues);
-
-      await db.query("COMMIT");
-
-      console.log("Insert Successful");
-
-      const htmlResponse = `
-        <script>
-          alert("Data added Successfully!");
-          setTimeout(function() {
-            window.location.href = '/';
-          }, 0);
-        </script>
-      `;
-      res.status(200).send(htmlResponse);
+    // Check seat availability
+    let checkQuery;
+    switch (seat_type.toLowerCase()) {
+      case "nri":
+        checkQuery = `
+          SELECT NRI_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND NRI_vacant > 0
+        `;
+        break;
+      case "il":
+        checkQuery = `
+          SELECT IL_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND IL_vacant > 0
+        `;
+        break;
+      case "ciwgc":
+        checkQuery = `
+          SELECT CIWGC_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND CIWGC_vacant > 0
+        `;
+        break;
+      case "oci":
+      case "pio":
+      case "fn":
+        checkQuery = `
+          SELECT OPF_vacant FROM college_data
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2) AND OPF_vacant > 0
+        `;
+        break;
+      default:
+        throw new Error("Invalid seat type");
     }
+
+    const checkResult = await db.query(checkQuery, [college, branch]);
+    if (checkResult.rows.length === 0) {
+      await db.query("ROLLBACK");
+      return res.status(400).send(`
+        <script>
+          alert("No available seats for the specified seat type.");
+          setTimeout(function() {
+            window.location.href = '/add_student';
+          }, 0);
+        </script>
+      `);
+    }
+
+    const insertQuery = `
+      INSERT INTO student_details (first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `;
+    const insertValues = [first_name, last_name, mobile, email, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa];
+    await db.query(insertQuery, insertValues);
+
+    // Update seat counts
+    let updateQuery;
+    switch (seat_type.toLowerCase()) {
+      case "nri":
+        updateQuery = `
+          UPDATE college_data
+          SET NRI_filled = NRI_filled + 1, NRI_vacant = NRI_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "il":
+        updateQuery = `
+          UPDATE college_data
+          SET IL_filled = IL_filled + 1, IL_vacant = IL_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "ciwgc":
+        updateQuery = `
+          UPDATE college_data
+          SET CIWGC_filled = CIWGC_filled + 1, CIWGC_vacant = CIWGC_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      case "oci":
+      case "pio":
+      case "fn":
+        updateQuery = `
+          UPDATE college_data
+          SET OPF_filled = OPF_filled + 1, OPF_vacant = OPF_vacant - 1
+          WHERE LOWER(college) = LOWER($1) AND LOWER(branch) = LOWER($2)
+        `;
+        break;
+      default:
+        throw new Error("Invalid seat type");
+    }
+
+    await db.query(updateQuery, [college, branch]);
+
+    await db.query("COMMIT");
+    res.redirect("/student_info");
   } catch (error) {
     await db.query("ROLLBACK");
 
@@ -125,8 +148,7 @@ router.post("/add_student", ensureAuthenticated, async (req, res) => {
 
 router.get("/student_details", ensureAuthenticated, async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM student_details");
-    console.log("Student Details Fetched:", result.rows);
+    const result = await db.query("SELECT * FROM student_details ORDER BY id ASC");
     res.render("student_details", { students: result.rows });
   } catch (error) {
     console.error("Error fetching student data:", error);
@@ -134,18 +156,15 @@ router.get("/student_details", ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Route to render update student form
 router.get("/update_student/:email", ensureAuthenticated, async (req, res) => {
   const email = req.params.email;
-  
+
   try {
     const result = await db.query("SELECT * FROM student_details WHERE email = $1", [email]);
     if (result.rows.length === 0) {
-      console.log("Student Not Found for Email:", email);
       return res.status(404).send("Student not found");
     }
     const student = result.rows[0];
-    console.log("Student Data for Update:", student);
     res.render("update_student.ejs", { student });
   } catch (error) {
     console.error("Error fetching student data:", error);
@@ -153,33 +172,17 @@ router.get("/update_student/:email", ensureAuthenticated, async (req, res) => {
   }
 });
 
-
-
-router.get("/student_info", ensureAuthenticated, async (req, res) => {
-  try {
-    // Fetch the latest student information from the database
-    const result = await db.query("SELECT * FROM student_details");
-    
-    // Render the student_info page with the latest student data
-    res.render("student_info.ejs", { students: result.rows });
-  } catch (error) {
-    console.error("Error fetching student data:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-
 router.post("/update_student/:email", ensureAuthenticated, async (req, res) => {
-  // Extract updated student information from the form submission
   const { first_name, last_name, mobile, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa } = req.body;
   const email = req.params.email;
 
-  try {
-    // Update student information in the database
-    await db.query("UPDATE student_details SET first_name = $1, last_name = $2, mobile = $3, enrolment_no = $4, seat_type = $5, candidate_type = $6, college = $7, branch = $8, fee_status = $9, doa = $10 WHERE email = $11", 
-    [first_name, last_name, mobile, enrolment_no, seat_type, candidate_type, college, branch, fee_status, doa, email]);
+  const validCollege = college.toLowerCase();
+  const validBranch = branch.toLowerCase();
+  const validFeeStatus = fee_status.toLowerCase();
 
-    // Redirect the user to the student_info page after updating
+  try {
+    await db.query("UPDATE student_details SET first_name = $1, last_name = $2, mobile = $3, enrolment_no = $4, seat_type = $5, candidate_type = $6, college = $7, branch = $8, fee_status = $9, doa = $10 WHERE email = $11", 
+    [first_name, last_name, mobile, enrolment_no, seat_type, candidate_type, validCollege, validBranch, validFeeStatus, doa, email]);
     res.redirect("/student_info");
   } catch (error) {
     console.error("Error updating student data:", error);
@@ -187,13 +190,11 @@ router.post("/update_student/:email", ensureAuthenticated, async (req, res) => {
   }
 });
 
-
 router.post("/remove_student/:email", ensureAuthenticated, async (req, res) => {
   try {
     const email = req.params.email;
-    const deleteResult = await db.query("DELETE FROM student_details WHERE email = $1", [email]);
-    console.log("Delete Result:", deleteResult);
-    res.redirect("/student_details");
+    await db.query("DELETE FROM student_details WHERE email = $1", [email]);
+    res.redirect("/student_info");
   } catch (error) {
     console.error("Error removing student data:", error);
     res.status(500).send("Internal Server Error");

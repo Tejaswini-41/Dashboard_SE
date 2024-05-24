@@ -6,7 +6,7 @@ import dbRoutes from "./routes/dbRoutes.js";
 import viewRoutes from "./routes/viewRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import loginRouter from "./routes/login.js";
-import adminRoutes from "./adminRoutes.js";
+
 
 
 const __filename = fileURLToPath(import.meta.url);
