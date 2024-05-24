@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser"; // Add this line for bodyParser import express from "express";
 import { db } from "./db.js"; // Corrected import path
 import { ensureAuthenticated } from "./db_functions.js";
+
+
 import { addUser } from "./userController.js";
 
 const router = express.Router();

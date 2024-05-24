@@ -1,31 +1,38 @@
-import { db } from './db.js';
+import { db } from "./db.js";
 
+// Add Branch
 export const addBranch = async (req, res) => {
-  const { branchName } = req.body;
+  const { name, intake } = req.body;
   try {
-    const result = await db.query('INSERT INTO branches (name) VALUES ($1) RETURNING *', [branchName]);
-    res.status(200).json({ message: 'Branch added successfully', branch: result.rows[0] });
+    await db.query("INSERT INTO branches (name, intake) VALUES ($1, $2)", [name, intake]);
+    res.status(201).send("Branch added successfully");
   } catch (error) {
-    res.status(500).json({ message: 'Error adding branch', error });
+    console.error("Error adding branch:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
+// Edit Branch
 export const editBranch = async (req, res) => {
-  const { branchId, branchName } = req.body;
+  const { id } = req.params;
+  const { name, intake } = req.body;
   try {
-    const result = await db.query('UPDATE branches SET name = $1 WHERE id = $2 RETURNING *', [branchName, branchId]);
-    res.status(200).json({ message: 'Branch edited successfully', branch: result.rows[0] });
+    await db.query("UPDATE branches SET name = $1, intake = $2 WHERE id = $3", [name, intake, id]);
+    res.status(200).send("Branch updated successfully");
   } catch (error) {
-    res.status(500).json({ message: 'Error editing branch', error });
+    console.error("Error updating branch:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
+// Remove Branch
 export const removeBranch = async (req, res) => {
-  const { branchId } = req.body;
+  const { id } = req.params;
   try {
-    await db.query('DELETE FROM branches WHERE id = $1', [branchId]);
-    res.status(200).json({ message: 'Branch removed successfully' });
+    await db.query("DELETE FROM branches WHERE id = $1", [id]);
+    res.status(200).send("Branch removed successfully");
   } catch (error) {
-    res.status(500).json({ message: 'Error removing branch', error });
+    console.error("Error removing branch:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head.ejs") %>
+<body>
+<%- include("partials/header.ejs") %>
+
+  <title>Branches</title>
+</head>
+<body>
+  <h1>Branches</h1>
+  <a href="/add_branch">Add Branch</a>
+  <ul>
+    <% branches.forEach(branch => { %>
+      <li>
+        <%= branch.name %> - Intake: <%= branch.intake %>
+        <a href="/update_branch/<%= branch.id %>">Edit</a>
+        <form action="/remove_branch/<%= branch.id %>" method="POST" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }); %>
+  </ul>
+  <%- include("partials/footer.ejs") %>
+</body>
+</html>

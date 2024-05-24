@@ -1,12 +1,9 @@
 import express from "express";
-import { addUser, editUser, removeUser } from ".userController.js";
+import { addUser, editUser, removeUser } from "./userController.js";
 import { addBranch, editBranch, removeBranch } from "./branchController.js";
 import { addIntake, editIntake, removeIntake } from "./intakeController.js";
 
-
 const router = express.Router();
-
-
 
 // User Routes
 router.post("/manage-users/add", addUser);
@@ -15,8 +12,8 @@ router.delete("/manage-users/remove/:id", removeUser);
 
 // Branch Routes
 router.post('/manage-branches/add', addBranch);
-router.post('/manage-branches/edit', editBranch);
-router.post('/manage-branches/remove', removeBranch);
+router.put('/manage-branches/edit/:id', editBranch);
+router.delete('/manage-branches/remove/:id', removeBranch);
 
 // Intake Routes
 router.post("/manage-intake/add", addIntake);

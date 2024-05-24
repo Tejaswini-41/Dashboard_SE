@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS seat_data (
 	UNIQUE (college, branch, seat_type)
 );
 
+
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     user_type VARCHAR(50) NOT NULL CHECK (user_type IN ('admin', 'guest', 'user')),
@@ -42,6 +43,7 @@ SELECT
     SUM(intake) AS total_intake,
     SUM(filled) AS total_filled,
     SUM(vacant) AS total_vacant
+
 FROM 
     seat_data
 GROUP BY 

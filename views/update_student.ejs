@@ -72,7 +72,7 @@
       <div class="col">
         <div class="form-floating">
           <select class="form-select" name="branch" aria-label="Branch">
-            <option value="" disabled>Select Branch</option>
+            <option value="" disabled>Select Branch</option>            
             <option value="CSE" <%= student.branch === "CSE" ? 'selected' : '' %>>Computer Science (CSE)</option>
             <option value="IT" <%= student.branch === "IT" ? 'selected' : '' %>>Information Technology (IT)</option>
             <option value="AIDS" <%= student.branch === "AIDS" ? 'selected' : '' %>>Artificial Intelligence and Data Science (AIDS)</option>
@@ -87,6 +87,7 @@
           <label for="branch">Branch</label>
         </div>
       </div>
+      
     </div>
 
     <div class="row g-3 mb-3">
