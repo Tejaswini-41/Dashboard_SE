@@ -29,30 +29,22 @@
         </div>
       </div>
 
-      <div class="container">
-        <h1>Manage Branches & Intake</h1>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <form action="/manage-branches/add"  method="POST" class="d-grid gap-2 w-50">
-              <button type="submit" class="btn btn-primary">Add Branch & intake</button>
-            </form>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <form action="/manage-branches/edit" method="POST" class="d-grid gap-2 w-50">
-              <button type="submit" class="btn btn-primary">Edit Branch & intake</button>
-            </form>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <form action="/manage-branches/remove" method="POST" class="d-grid gap-2 w-50">
-              <button type="submit" class="btn btn-primary">Remove Branch & Intake</button>
-            </form>
-          </div>
-        </div>
-      </div>
+
+
+    <div class="container mt-4">
+      <h1>Manage Branch & Intake</h1>
+      <ul class="list-group w-25">
+        <li class="list-group-item">
+          <a href="/manage-branches/add" class="btn btn-success w-100">Add New Branch & Intake</a>
+        </li>
+        <li class="list-group-item">
+          <a href="/manage-branches/edit" class="btn btn-success w-100">Edit Branch & Intake</a>
+        </li>
+        <li class="list-group-item">
+          <a href="/manage-branches/remove" class="btn btn-success w-100">Remove Branch</a>
+        </li>
+      </ul>
+    </div>
 
     <%- include("partials/footer.ejs") %>
   </body>

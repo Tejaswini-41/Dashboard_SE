@@ -1,28 +1,24 @@
+// adminRoutes.js
+
 import express from "express";
 import { addUser, editUser, removeUser } from "./userController.js";
-import { addBranch, editBranch, removeBranch } from "./branchController.js";
-import { addIntake, editIntake, removeIntake } from "./intakeController.js";
+import { addBranch, editBranch, removeBranch, renderEditBranchPage,renderAddBranchPage } from "./branchController.js";
+
 
 const router = express.Router();
 
-// // User Routes
-// router.post("/manage-users/add", addUser);
-// router.put("/manage-users/edit/:id", editUser);
-// router.delete("/manage-users/remove/:id", removeUser);
-
-// Route to render the add_branch.ejs form
-router.get("/manage-branches/add-form", (req, res) => {
-    res.render("add_branch");
-  });
+// User Routes
+router.post("/manage-users/add", addUser);
+router.put("/manage-users/edit/:id", editUser);
+router.delete("/manage-users/remove/:id", removeUser);
 
 // Branch Routes
 router.post('/manage-branches/add', addBranch);
-router.put('/manage-branches/edit/:id', editBranch);
-router.delete('/manage-branches/remove/:id', removeBranch);
+router.post('/manage-branches/edit/:id', editBranch);
+router.post('/manage-branches/remove/:id', removeBranch);
 
-// // Intake Routes
-// router.post("/manage-intake/add", addIntake);
-// router.put("/manage-intake/edit/:id", editIntake);
-// router.delete("/manage-intake/remove/:id", removeIntake);
+// Route to render the edit branch page
+router.get('/manage-branches/add', renderAddBranchPage);
+router.get('/manage-branches/edit', renderEditBranchPage);
 
 export default router;

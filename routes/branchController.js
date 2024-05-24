@@ -1,67 +1,53 @@
-import express from "express";
-import { db } from "./db.js";
+import { db } from './db.js';
 
-// Add Branch
+// Function to render the edit branch page
+export const renderEditBranchPage = async (req, res) => {
+  try {
+    res.render('edit_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+export const renderAddBranchPage = async (req, res) => {
+  try {
+    res.render('add_branch');
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
 export const addBranch = async (req, res) => {
-  const { college, branch, intake } = req.body;
+  const { branchName } = req.body;
   try {
-    await db.query("BEGIN");
-
-    const insertQuery = `
-      INSERT INTO branches (college, name, intake)
-      VALUES ($1, $2, $3)
-    `;
-    const insertValues = [college, branch, intake];
-    await db.query(insertQuery, insertValues);
-
-    await db.query("COMMIT");
-    const htmlResponse = `
-      <script>
-        alert("Branch added successfully!");
-        setTimeout(function() {
-          window.location.href = '/manage-branches/add-form';
-        }, 0);
-      </script>
-    `;
-    res.status(201).send(htmlResponse);
+    const result = await db.query('INSERT INTO branches (name) VALUES ($1) RETURNING *', [branchName]);
+    res.status(200).json({ message: 'Branch added successfully', branch: result.rows[0] });
   } catch (error) {
-    await db.query("ROLLBACK");
-    console.error("Error adding branch:", error);
-
-    const htmlResponse = `
-      <script>
-        alert("An error occurred while adding the branch.");
-        setTimeout(function() {
-          window.location.href = '/manage-branches/add-form';
-        }, 0);
-      </script>
-    `;
-    res.status(500).send(htmlResponse);
+    res.status(500).json({ message: 'Error adding branch', error });
   }
 };
 
-
-// Edit Branch
 export const editBranch = async (req, res) => {
-  const { id } = req.params;
-  const { college, branch, intake } = req.body;
+  const { branchId, branchName } = req.body;
   try {
-    await db.query("UPDATE branches SET college = $1, name = $2, intake = $3 WHERE id = $4", [college, branch, intake, id]);
-    res.status(200).send("Branch updated successfully");
+    const result = await db.query('UPDATE branches SET name = $1 WHERE id = $2 RETURNING *', [branchName, branchId]);
+    res.status(200).json({ message: 'Branch edited successfully', branch: result.rows[0] });
   } catch (error) {
-    console.error("Error updating branch:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ message: 'Error editing branch', error });
   }
 };
 
-// Remove Branch
 export const removeBranch = async (req, res) => {
-  const { id } = req.params;
+  const { branchId } = req.body;
   try {
-    await db.query("DELETE FROM branches WHERE id = $1", [id]);
-    res.status(200).send("Branch removed successfully");
+    await db.query('DELETE FROM branches WHERE id = $1', [branchId]);
+    res.status(200).json({ message: 'Branch removed successfully' });
   } catch (error) {
-    console.error("Error removing branch:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ message: 'Error removing branch', error });
   }
 };
+
+
