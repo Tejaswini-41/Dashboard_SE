@@ -10,7 +10,7 @@
         <div class="col-md-6">
           <div class="card shadow-lg p-3 mb-5 bg-white rounded">
             <div class="card-body">
-              <form id="addBranchForm">
+              <form method="post" action="/manage-branches/add">
                 <div class="mb-3">
                   <label for="college" class="form-label">College Name:</label>
                   <select class="form-select" id="college" name="college" required>
@@ -31,25 +31,25 @@
                 <div class="mb-3">
                   <p>Seats Available:</p>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="nri" name="nri">
+                    <input class="form-check-input" type="checkbox" id="nri" name="nri" checked>
                     <label class="form-check-label" for="nri">
                       NRI
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="il" name="il">
+                    <input class="form-check-input" type="checkbox" id="il" name="il" checked>
                     <label class="form-check-label" for="il">
                       IL
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="ciwgc" name="ciwgc">
+                    <input class="form-check-input" type="checkbox" id="ciwgc" name="ciwgc" checked>
                     <label class="form-check-label" for="ciwgc">
                       CIWGC
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="other" name="other">
+                    <input class="form-check-input" type="checkbox" id="other" name="other" checked>
                     <label class="form-check-label" for="other">
                       Other (OCI, PIO, FN)
                     </label>
@@ -64,25 +64,5 @@
     </div>
 
     <%- include("partials/footer.ejs") %>
-
-    <script>
-      document.getElementById('addBranchForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-        
-        // Submit the form using AJAX
-        fetch('/manage-branches/add', {
-          method: 'POST',
-          body: new FormData(this)
-        })
-        .then(response => response.text())
-        .then(html => {
-          document.body.innerHTML = html; // Replace the current document with the response
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Failed to add branch');
-        });
-      });
-    </script>
   </body>
 </html>
