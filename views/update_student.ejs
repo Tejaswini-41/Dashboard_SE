@@ -60,7 +60,7 @@
     <div class="row g-3 mb-3">
       <div class="col">
         <div class="form-floating">
-          <select class="form-select" name="college" aria-label="College">
+          <select class="form-select" name="college" aria-label="College" id="college">
             <option value="" disabled>Select College</option>
             <option value="VIIT" <%= student.college === "VIIT" ? 'selected' : '' %>>VIIT</option>
             <option value="VIT" <%= student.college === "VIT" ? 'selected' : '' %>>VIT</option>
@@ -71,18 +71,8 @@
       </div>
       <div class="col">
         <div class="form-floating">
-          <select class="form-select" name="branch" aria-label="Branch">
+          <select class="form-select" name="branch" aria-label="Branch" id="branch" required>
             <option value="" disabled>Select Branch</option>
-            <option value="CSE" <%= student.branch === "CSE" ? 'selected' : '' %>>Computer Science (CSE)</option>
-            <option value="IT" <%= student.branch === "IT" ? 'selected' : '' %>>Information Technology (IT)</option>
-            <option value="AIDS" <%= student.branch === "AIDS" ? 'selected' : '' %>>Artificial Intelligence and Data Science (AIDS)</option>
-            <option value="AI" <%= student.branch === "AI" ? 'selected' : '' %>>Artificial Intelligence (AI)</option>
-            <option value="AIML" <%= student.branch === "AIML" ? 'selected' : '' %>>Artificial Intelligence and Machine Learning (AIML)</option>
-            <option value="Civil" <%= student.branch === "Civil" ? 'selected' : '' %>>Civil Engineering</option>
-            <option value="Mech" <%= student.branch === "Mech" ? 'selected' : '' %>>Mechanical Engineering</option>
-            <option value="ENTC" <%= student.branch === "ENTC" ? 'selected' : '' %>>Electronics and Telecommunication (ENTC)</option>
-            <option value="DS" <%= student.branch === "DS" ? 'selected' : '' %>>Data Science</option>
-            <option value="IoT" <%= student.branch === "IoT" ? 'selected' : '' %>>Internet of Things (IoT)</option>
           </select>
           <label for="branch">Branch</label>
         </div>
@@ -117,4 +107,45 @@
 
 <%- include("partials/footer.ejs") %>
 </body>
+<script>
+  async function fetchBranches(college) {
+    try {
+      const response = await fetch(`/branches?college=${college}`);
+      if (!response.ok) throw new Error("Failed to fetch branches");
+
+      const data = await response.json();
+
+      // Update the branch dropdown with new options
+      const branchSelect = document.getElementById("branch");
+      branchSelect.innerHTML =
+        '<option value="" disabled selected>Select Branch</option>';
+      data.branches.forEach((branch) => {
+        const option = document.createElement("option");
+        option.value = branch.branch.toUpperCase();
+        option.textContent = branch.branch.toUpperCase();
+        branchSelect.appendChild(option);
+      });
+
+      // Set the branch to the student's current branch if available
+      branchSelect.value = "<%= student.branch.toUpperCase()%>";
+
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+      alert("Error fetching branches. Please try again.");
+    }
+  }
+
+  document.getElementById("college").addEventListener("change", function () {
+    const college = this.value.toLowerCase();
+    fetchBranches(college);
+  });
+
+  // Fetch branches for the initial college on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    const initialCollege = document.getElementById("college").value.toLowerCase();
+    if (initialCollege) {
+      fetchBranches(initialCollege);
+    }
+  });
+</script>
 </html>
