@@ -68,9 +68,9 @@
                 <td><%= row.college.toUpperCase() %></td>
                 <td><%= row.branch.toUpperCase() %></td>
                 <td><%= row.seat_type %></td>
-                <td><%= row.si %></td> <!-- Assuming 'si' refers to total seats -->
-                <td><%= row.nri_filled + row.il_filled + row.ciwgc_filled %></td> <!-- Assuming 'nri_filled', 'il_filled', and 'ciwgc_filled' represent filled seats -->
-                <td><%= row.si - (row.nri_filled + row.il_filled + row.ciwgc_filled) %></td> <!-- Calculate vacant seats -->
+                <td><%= row.total_seats %></td>
+                <td><%= row.total_filled %></td>
+                <td><%= row.total_vacant %></td>
               </tr>
             <% }); %>
           </tbody>
