@@ -21,7 +21,6 @@
           <th scope="col">Branch</th>
           <th scope="col">Fee Status</th>
           <th scope="col">Date of Admission</th>
-          <th scope="col">Actions</th> <!-- New column for actions -->
         </tr>
       </thead>
       <tbody>
@@ -40,15 +39,6 @@
             <%= new Date(student.doa).toLocaleDateString('en-US', { weekday:
             'short', day: '2-digit', month: 'short', year: 'numeric' }) %>
           </td>
-          <td>
-            <!-- Add button -->
-            <a href="/update_student/<%= student.email %>" class="btn btn-primary">ADD</a>
-            <!-- Update button -->
-            <a href="/update_student/<%= student.email %>" class="btn btn-primary">Update</a>
-            <!-- Remove button -->
-            <form action="/remove_student/<%= student.email %>" method="post" style="display: inline;">
-              <button type="submit" class="btn btn-danger">Remove</button>
-            </form>
           </td>
         </tr>
         <% }); %>
@@ -57,6 +47,7 @@
   </div>
   <div class="d-grid gap-2 d-md-flex justify-content-md-center">
     <a href="/" class="btn btn-success">Home</a>
+    <a href="/student_info" class="btn btn-primary">Edit Students</a>
   </div>
 </div>
 
