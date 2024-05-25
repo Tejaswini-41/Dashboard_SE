@@ -10,14 +10,9 @@
         <form action="/view_data" method="post">
           <div class="mb-3">
             <label for="college" class="form-label">Select College:</label>
-            <select
-              class="form-select"
-              id="college"
-              name="college"
-              aria-label="Select College"
-            >
-              <option disabled>Select College</option>
-              <option selected value="all">All</option>
+            <select class="form-select" id="college" name="college" aria-label="Select College">
+              <option disabled selected>Select College</option>
+              <option value="all">All</option>
               <option value="vit">VIT</option>
               <option value="viit">VIIT</option>
               <option value="vu">VU</option>
@@ -26,137 +21,104 @@
 
           <div class="mb-3">
             <label for="branch" class="form-label">Select Branch:</label>
-            <select
-              class="form-select"
-              id="branch"
-              name="branch"
-              aria-label="Select Branch"
-            >
-              <option disabled>Select Branch</option>
-              <option selected value="all">All</option>
-              <option value="cse">Computer Science (CSE)</option>
-              <option value="it">Information Technology (IT)</option>
-              <option value="aids">
-                Artificial Intelligence and Data Science (AIDS)
-              </option>
-              <option value="ai">Artificial Intelligence (AI)</option>
-              <option value="aiml">
-                Artificial Intelligence and Machine Learning (AIML)
-              </option>
-              <option value="civil">Civil Engineering</option>
-              <option value="mech">Mechanical Engineering</option>
-              <option value="entc">
-                Electronics and Telecommunication (ENTC)
-              </option>
-              <option value="ds">Data Science</option>
-              <option value="iot">Internet of Things (IoT)</option>
+            <select class="form-select" id="branch" name="branch" aria-label="Select Branch">
+              <option disabled selected>Select Branch</option>
+              <option value="all">All</option>
+              <!-- Branch options will be dynamically added here -->
             </select>
           </div>
-
-          <div class="mb-3">
-            <label for="seatIntake" class="form-label">NBA Accredition</label>
-            <select
-              class="form-select"
-              id="seatIntake"
-              name="seatIntake"
-              aria-label="Seat Intake"
-            >
-              <option disabled>NBA Accredition</option>
-              <option selected value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label for="seatIntake" class="form-label">Seat Intake:</label>
-            <select
-              class="form-select"
-              id="seatIntake"
-              name="seatIntake"
-              aria-label="Seat Intake"
-            >
-              <option disabled>Seat Intake</option>
-              <option selected value="60">60</option>
-              <option value="180">120</option>
-              <option value="180">180</option>
-              <option value="240">240</option>
-              <option value="360">360</option>
-            </select>
-          </div>
-
 
           <div class="mb-3">
             <label for="seat_type" class="form-label">Seat Type:</label>
-            <select
-              class="form-select"
-              id="seat_type"
-              name="seat_type"
-              aria-label="Select Seat Type"
-            >
-              <option disabled>Select seat Type</option>
-              <option selected value="all">All</option>
+            <select class="form-select" id="seat_type" name="seat_type" aria-label="Select Seat Type">
+              <option disabled selected>Select Seat Type</option>
+              <option value="all">All</option>
               <option value="NRI">NRI</option>
-              <option value="OCI">OCI</option>
-              <option value="FN">FN</option>
-              <option value="PIO">PIO</option>
+              <option value="IL">IL</option>
               <option value="CIWGC">CIWGC</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
-          <button type="submit" class="btn btn-primary">
-            View Available Seats
-          </button>
-
-          <a href="/" class="btn btn-success"> Home</a>
-          <a href="/view_data" class="btn btn-danger"> Clear All</a>
+          <button type="submit" class="btn btn-primary">View Available Seats</button>
+          <a href="/" class="btn btn-success">Home</a>
+          <a href="/view_data" class="btn btn-danger">Clear All</a>
         </form>
       </div>
     </div>
 
     <div class="container">
-      <% if ( data.local && data.response.length > 0) { %>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Sr.No.:</th>
-            <th>College</th>
-            <th>Branch</th>
-            <th>NBA Accredition</th>
-            <th>Seat Type</th>
-            <th>SI</th>
-            <th>Filled</th>
-            <th>Vacant</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          <%data.response.forEach(function(row, index) { %>
-          <tr>
-            <td><%= index + 1 %></td>
-            <td><%= data.names.college[row.college] %></td>
-            <td><%= data.names.branch[row.branch] %></td>
-            <td><%= row.NBA_Accredition %></td>
-            <td><%= row.seat_type %></td>
-            <td><%= row.SI %></td>
-            <td><%= row.filled %></td>
-            <td><%= row.vacant %></td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
-      <% } else if (data.local && data.response.length == 0) {%>
-      <tr>
-        <td colspan="7">
-          No Data Available For this Category. Please Contact the Administrator.
-        </td>
-      </tr>
+      <% if (data.local && data.response.length > 0) { %>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Sr.No.:</th>
+              <th>College</th>
+              <th>Branch</th>
+              <th>Seat Type</th>
+              <th>Total Seats</th>
+              <th>Total Filled</th>
+              <th>Total Vacant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.response.forEach(function(row, index) { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= row.college.toUpperCase() %></td>
+                <td><%= row.branch.toUpperCase() %></td>
+                <td><%= row.seat_type %></td>
+                <td><%= row.si %></td> <!-- Assuming 'si' refers to total seats -->
+                <td><%= row.nri_filled + row.il_filled + row.ciwgc_filled %></td> <!-- Assuming 'nri_filled', 'il_filled', and 'ciwgc_filled' represent filled seats -->
+                <td><%= row.si - (row.nri_filled + row.il_filled + row.ciwgc_filled) %></td> <!-- Calculate vacant seats -->
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else if (data.local && data.response.length == 0) { %>
+        <p>No Data Available For this Category. Please Contact the Administrator.</p>
       <% } else { %>
-      <tr>
-        <td colspan="7">
-          No Data to show. Click on the View Available Data button above.
-        </td>
-      </tr>
+        <p>No Data to show. Click on the View Available Data button above.</p>
+      <% } %>
     </div>
-    <% } %> <%- include("partials/footer.ejs") %>
+
+    <%- include("partials/footer.ejs") %>
+
+    <script>
+      // Function to fetch branches based on the selected college
+      async function fetchBranches(college) {
+        try {
+          const response = await fetch(`/branches?college=${college}`);
+          if (!response.ok) throw new Error("Failed to fetch branches");
+
+          const data = await response.json();
+
+          // Update the branch dropdown with new options
+          const branchSelect = document.getElementById("branch");
+          branchSelect.innerHTML =
+            '<option value="" disabled selected>Select Branch</option>';
+          const allOption = document.createElement("option");
+          allOption.value = "all";
+          allOption.textContent = "All";
+          branchSelect.appendChild(allOption);
+          data.branches.forEach((branch) => {
+            const option = document.createElement("option");
+            option.value = branch.branch.toUpperCase();
+            option.textContent = branch.branch.toUpperCase();
+            branchSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+          alert("Error fetching branches. Please try again.");
+        }
+      }
+
+      document
+        .getElementById("college")
+        .addEventListener("change", function () {
+          const college = this.value.toLowerCase();
+          fetchBranches(college);
+        });
+    </script>
   </body>
 </html>

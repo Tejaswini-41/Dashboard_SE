@@ -256,12 +256,17 @@ export const removeBranch= async (req, res) => {
 export const getBranchesByCollege = async (req, res) => {
   try {
     const { college } = req.query;
-    const query = "SELECT id, branch FROM college_data WHERE college = $1";
-    const result = await db.query(query, [college]);
+    let query;
+    if (college === "all") {
+      query = "SELECT DISTINCT branch FROM college_data";
+    } else {
+      query = "SELECT DISTINCT branch FROM college_data WHERE college = $1";
+    }
+    const result = await db.query(query, college === "all" ? [] : [college]);
     res.json({ branches: result.rows });
   } catch (error) {
-    console.error('Error fetching branches by college:', error);
-    res.status(500).send('Internal Server Error');
+    console.error("Error fetching branches by college:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
